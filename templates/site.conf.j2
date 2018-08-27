@@ -69,7 +69,7 @@ server {
   server_name {{ domain }};
 
   # Path for static files
-  root {{ http_root }}/{{ domain }}/{{ public_directory }};
+  #root {{ http_root }}/{{ domain }}/{{ public_directory }};
 
   #Specify a charset
   charset utf-8;
@@ -77,10 +77,6 @@ server {
   # Logs for local domain
   access_log /var/log/nginx/{{ domain }}/access.log main;
   error_log  /var/log/nginx/{{ domain }}/error.log;
-
-{% if env_name == "dev" %}
-  autoindex on;
-{% endif %}
 
   client_max_body_size {{ max_upload_size }}m;
 
@@ -91,24 +87,26 @@ server {
     log_not_found off;
   }
 
-  index index.html index.htm;
+#  index index.html index.htm;
 
-{% if passenger_app %}
-  passenger_enabled on;
-
-  {% if env_name == "dev" %}
-  passenger_app_env development;
-  {% else %}
-  passenger_app_env production;
-  {% endif %}
-
-  passenger_app_root {{ http_root }}/{{ domain }};
-{% endif %}
-
+# 
+  location / {
+    proxy_http_version 1.1;
+    proxy_ssl_server_name on;
+    proxy_ssl_session_reuse on; #kitar si da los logs da error  SSL3_GET_FINISHED:digest check failed
+    proxy_ssl_protocols TLSv1.2;
+    proxy_ssl_verify on;
+    proxy_ssl_name $proxy_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Upgrade $http_upgrade;
+ #  proxy_set_header Connection $connection_upgrade;
+    proxy_pass http://127.0.0.1:3000;
+  }
   # Include the basic h5bp config set
   include h5bp/basic.conf;
 
-  {% for file in nginx_configs | default([]) %}
-  include conf.d/{{ file }};
-  {% endfor %}
+#  {% for file in nginx_configs | default([]) %}
+#  include conf.d/{{ file }};
+#  {% endfor %}
 }

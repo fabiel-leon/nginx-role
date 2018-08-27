@@ -1,13 +1,13 @@
 ---
-env_name: dev
+env_name: prod
 http_root: /srv/http
 public_directory: public
 copy_index: no
 
-max_upload_size: 10
+max_upload_size: 12
 
-use_ssl: no
-use_letsencrypt: no
+use_ssl: yes
+use_letsencrypt: yes
 
 privatekey_bits: 4096
 dhparam_bits: 2048

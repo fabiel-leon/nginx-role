@@ -11,9 +11,9 @@
   file: path={{ http_root }}/{{ domain }} state=directory mode=02775
   become: yes
 
-- name: Create Public Directory
-  file: path={{ http_root }}/{{ domain }}/{{ public_directory }} state=directory mode=02775
-  become: yes
+# - name: Create Public Directory
+#   file: path={{ http_root }}/{{ domain }}/{{ public_directory }} state=directory mode=02775
+#   become: yes
 
 - name: Copy Site Config
   template:
@@ -25,7 +25,7 @@
   become: yes
   notify:
     - Restart Nginx
-    - Restart Passenger App
+    # - Restart Passenger App
 
 - name: Activate Site
   file:
@@ -35,7 +35,7 @@
   become: yes
   notify:
     - Restart Nginx
-    - Restart Passenger App
+    # - Restart Passenger App
 
 - name: Create Site Log Directory
   file:
@@ -46,11 +46,11 @@
     mode:  0750
   become: yes
 
-- name: Copy index.html
-  template:
-    src: index.html.j2
-    dest: "{{ http_root }}/{{ domain }}/{{ public_directory }}/index.html"
-  when: copy_index
+# - name: Copy index.html
+#   template:
+#     src: index.html.j2
+#     dest: "{{ http_root }}/{{ domain }}/{{ public_directory }}/index.html"
+#   when: copy_index
 
 - name: Add Domain to Hosts File
   lineinfile:

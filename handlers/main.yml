@@ -3,8 +3,13 @@
   service: name=nginx state=restarted
   become: yes
 
-- name: Restart Passenger App
-  command: >-
-    passenger-config restart-app {{ http_root }}/{{ domain }} --ignore-app-not-running
-    {{ "--ignore-passenger-not-running" if ansible_connection | default('smart') == 'docker' else "" }}
-  when: passenger_app
+
+- name: ufw-allow-web port 80
+  ufw: rule=allow port=80 proto=tcp
+  listen: ufw-allow-web
+  become: yes
+
+- name: ufw-allow-web port 443
+  ufw: rule=allow port=443 proto=tcp
+  listen: ufw-allow-web
+  become: yes

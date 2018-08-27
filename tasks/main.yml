@@ -1,20 +1,16 @@
 ---
-- name: Add Phusion Passenger APT Key
-  apt_key: keyserver=keyserver.ubuntu.com id=561F9B9CAC40B2F7 state=present
+- name: DesInstall apache2
+  apt: name={{ item }} state=absent update_cache=yes
   become: yes
-
-- name: Add Phusion Passenger APT Repository
-  apt_repository:
-    repo: deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main
-    state: present
-  become: yes
+  with_items:
+    - apache2
 
 - name: Install
-  apt: name={{ item }} state=present
+  apt: name={{ item }} state=present update_cache=yes
   become: yes
   with_items:
     - nginx-extras
-    - passenger
+  notify: ufw-allow-web
 
 - name: Create HTML5 Boilerplate Config Directories
   file: path=/etc/nginx/{{ item }} state=directory

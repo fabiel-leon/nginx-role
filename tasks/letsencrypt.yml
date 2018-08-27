@@ -4,7 +4,7 @@
   become: yes
 
 - name: Install Let's Encrypt
-  apt: name=python-certbot-nginx state=present
+  apt: name=python-certbot-nginx state=present update_cache=yes
   become: yes
 
 - name: Create Let's Encrypt Web Root
@@ -25,7 +25,7 @@
   lineinfile:
     name:     /etc/letsencrypt/renewal/{{ domain }}.conf
     regexp:   '^{{ item }}\s*=\s*.+(,?)$'
-    line:     '{{ item }} = {{ http_root }}/{{ domain }}/public\1'
+    line:     '{{ item }} = {{ http_root }}/{{ domain }}/{{ public_directory }}\1'
     backrefs: yes
   with_items:
     - webroot_path
